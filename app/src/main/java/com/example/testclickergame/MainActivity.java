@@ -8,26 +8,34 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
-import android.widget.ImageView;
+
+import com.example.testclickergame.databinding.ActivityMainBinding;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.annotations.NonNull;
+import io.reactivex.rxjava3.core.Completable;
+import io.reactivex.rxjava3.observers.DisposableCompletableObserver;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class MainActivity extends AppCompatActivity {
 
-    private com.example.testclickergame.databinding.ActivityMainBinding binding;
+    private ActivityMainBinding binding;
 
     AnimationDrawable mAnimation;
+    private long totalDuration = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = com.example.testclickergame.databinding.ActivityMainBinding.inflate(LayoutInflater.from(this));
+        binding = ActivityMainBinding.inflate(LayoutInflater.from(this));
         setContentView(binding.getRoot());
         initView();
         getListBitmapPlayer();
@@ -36,14 +44,47 @@ public class MainActivity extends AppCompatActivity {
         binding.imageView.setBackground(mAnimation);
 
         binding.constrainRoot.setOnClickListener(v -> {
-            if (mAnimation.isRunning()) {
-                mAnimation.stop();
-            }
-            updateScore();
-            showScore();
-
-            mAnimation.start();
+            stopAnimation(mAnimation);
+            updateData(getTotalDuration(mAnimation));
+            startAnimation(mAnimation);
         });
+    }
+
+    private void startAnimation(AnimationDrawable mAnimation) {
+        mAnimation.start();
+    }
+
+    private void stopAnimation(AnimationDrawable mAnimation) {
+        if (mAnimation.isRunning()) {
+            mAnimation.stop();
+        }
+    }
+
+    private long getTotalDuration(AnimationDrawable mAnimation) {
+        long temp = 0;
+
+        for (int i = 0; i < mAnimation.getNumberOfFrames(); i++) {
+            temp += mAnimation.getDuration(i);
+        }
+        return temp;
+    }
+
+    private void updateData(long totalDuration) {
+        Completable.timer(totalDuration, TimeUnit.MILLISECONDS)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new DisposableCompletableObserver() {
+                    @Override
+                    public void onComplete() {
+                        updateScore();
+                        showScore();
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable e) {
+                        e.printStackTrace();
+                    }
+                });
     }
 
     private void fillAnimationPlayer(AnimationDrawable mAnimation, List<BitmapDrawable> listBitmapPlayer) {
@@ -116,6 +157,7 @@ public class MainActivity extends AppCompatActivity {
 
         return bitmap;
     }
+
     @SuppressLint("SetTextI18n")
     private void showScore() {
         binding.textScore.setText("Score : " + Utils.score);
