@@ -22,15 +22,22 @@ import java.util.concurrent.TimeUnit;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.annotations.NonNull;
 import io.reactivex.rxjava3.core.Completable;
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.core.Observer;
+import io.reactivex.rxjava3.core.Single;
+import io.reactivex.rxjava3.core.SingleObserver;
+import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.observers.DisposableCompletableObserver;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
+@SuppressLint("SetTextI18n")
 public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
 
-    AnimationDrawable mAnimation;
+    private AnimationDrawable mAnimation;
     private long totalDuration = 0;
+    private boolean inGame = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,11 +50,21 @@ public class MainActivity extends AppCompatActivity {
         fillAnimationPlayer(mAnimation, getListBitmapPlayer());
         binding.imageView.setBackground(mAnimation);
 
-        binding.constrainRoot.setOnClickListener(v -> {
-            stopAnimation(mAnimation);
-            updateData(getTotalDuration(mAnimation));
-            startAnimation(mAnimation);
-        });
+        binding.constrainRoot.setOnClickListener(v -> startGame());
+        binding.stopGame.setOnClickListener(v -> stopGame());
+
+    }
+
+    private void startGame() {
+        inGame = true;
+        stopAnimation(mAnimation);
+        updateData(getTotalDuration(mAnimation));
+        startAnimation(mAnimation);
+    }
+
+    private void stopGame() {
+        inGame = false;
+        stopAnimation(mAnimation);
     }
 
     private void startAnimation(AnimationDrawable mAnimation) {
@@ -78,6 +95,9 @@ public class MainActivity extends AppCompatActivity {
                     public void onComplete() {
                         updateScore();
                         showScore();
+                        if (inGame) {
+                            updateData(totalDuration);
+                        }
                     }
 
                     @Override
@@ -134,8 +154,7 @@ public class MainActivity extends AppCompatActivity {
         return frames;
     }
 
-    private Bitmap getBitmapFromAssets(MainActivity mainActivity,
-                                       String filepath) {
+    private Bitmap getBitmapFromAssets(MainActivity mainActivity, String filepath) {
         AssetManager assetManager = mainActivity.getAssets();
         InputStream istr = null;
         Bitmap bitmap = null;
@@ -158,7 +177,6 @@ public class MainActivity extends AppCompatActivity {
         return bitmap;
     }
 
-    @SuppressLint("SetTextI18n")
     private void showScore() {
         binding.textScore.setText("Score : " + Utils.score);
     }
@@ -167,11 +185,10 @@ public class MainActivity extends AppCompatActivity {
         Utils.score = Utils.score + 1;
     }
 
-    @SuppressLint("SetTextI18n")
     private void initView() {
         binding.textScore.setText("Score : " + Utils.score);
         mAnimation = new AnimationDrawable();
-        mAnimation.setOneShot(true);
+        mAnimation.setOneShot(false);
         mAnimation.setVisible(true, true);
     }
 }
