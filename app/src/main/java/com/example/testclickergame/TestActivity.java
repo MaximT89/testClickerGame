@@ -1,16 +1,13 @@
 package com.example.testclickergame;
 
-import androidx.annotation.ColorInt;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.graphics.Color;
 import android.os.Bundle;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -28,6 +25,7 @@ public class TestActivity extends AppCompatActivity {
 
     private ActivityTestBinding binding;
     private Animation animation;
+    TextView textView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,7 +47,7 @@ public class TestActivity extends AppCompatActivity {
                 .subscribe(new DisposableCompletableObserver() {
                     @Override
                     public void onComplete() {
-                        TextView textView = new TextView(TestActivity.this);
+                        textView = new TextView(TestActivity.this);
                         RelativeLayout.LayoutParams lpView = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
                         lpView.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
                         textView.setLayoutParams(lpView);
