@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/constrain_root"
     android:layout_width="match_parent"
-    android:background="@drawable/bgcastle"
+    android:background="@drawable/game_background_4"
     android:layout_height="match_parent">
 
     <TextView
@@ -15,22 +15,36 @@
         android:layout_margin="10dp"
         android:textSize="20dp"
         android:textStyle="bold"
+        android:padding="10dp"
+        android:background="@drawable/bg_score"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="Score : 60" />
+        tools:text="Gold : 60" />
 
     <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="320dp"
-        android:layout_height="320dp"
+        android:id="@+id/imageViewPlayer"
+        android:layout_width="190dp"
+        android:layout_height="190dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.494"
+        app:layout_constraintHorizontal_bias="0.306"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.886"
-         />
+        app:layout_constraintVertical_bias="0.496"
+        tools:src="@drawable/orc_idle" />
+
+    <ImageView
+        android:id="@+id/imageViewEnemy"
+        android:layout_width="190dp"
+        android:layout_height="190dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.736"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.497"
+        tools:src="@drawable/goblin_idle" />
 
     <Button
         android:id="@+id/stop_game"
@@ -41,6 +55,49 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.91"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:visibility="gone"
+        tools:visibility="gone"/>
+
+    <RelativeLayout
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="120dp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/imageViewEnemy"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.789">
+
+        <TextView
+            android:id="@+id/text_hp_enemy"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="10dp"
+            android:layout_centerVertical="true"
+            tools:text="100"
+            android:textStyle="bold"
+            android:translationZ="100dp"
+            android:layout_centerHorizontal="true"
+            android:layout_centerInParent="true"
+            android:textColor="@color/white"/>
+
+        <ProgressBar
+            android:id="@+id/pb_horizontal"
+            style="@android:style/Widget.ProgressBar.Horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="15dp"
+            android:layout_alignParentTop="true"
+            android:layout_centerInParent="true"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:progressTint="#D72121"
+            tools:progress="25" />
+
+
+    </RelativeLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
