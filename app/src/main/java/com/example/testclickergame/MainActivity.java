@@ -87,20 +87,9 @@ public class MainActivity extends AppCompatActivity {
         updateScore(10);
     }
 
-
     private void stopGame() {
         inGame = false;
         stopAnimation(mAnimationPlayer);
-    }
-
-    private void startAnimation(AnimationDrawable mAnimation) {
-        mAnimation.start();
-    }
-
-    private void stopAnimation(AnimationDrawable mAnimation) {
-        if (mAnimation.isRunning()) {
-            mAnimation.stop();
-        }
     }
 
     private long getTotalDuration(AnimationDrawable mAnimation) {
@@ -237,6 +226,25 @@ public class MainActivity extends AppCompatActivity {
         return bitmap;
     }
 
+    private void initView() {
+
+        // Создаем Enemy
+        generateEnemy();
+
+        // Показываем золото
+        binding.textScore.setText("Gold : " + Utils.score);
+
+        // Создаем аниматор для ГГ
+        mAnimationPlayer = new AnimationDrawable();
+        mAnimationPlayer.setOneShot(true);
+        mAnimationPlayer.setVisible(true, true);
+
+        // Создаем аниматор для Enemy
+        mAnimationEnemy = new AnimationDrawable();
+        mAnimationEnemy.setOneShot(true);
+        mAnimationEnemy.setVisible(true, true);
+    }
+
     private void showScore() {
         binding.textScore.setText("Gold : " + Utils.score);
     }
@@ -245,28 +253,15 @@ public class MainActivity extends AppCompatActivity {
         Utils.score = Utils.score + count;
     }
 
-    private void initView() {
-
-        hpEnemy = Utils.getHpEnemy(Utils.currentLevelScene);
-
-        binding.pbHorizontal.setMax(hpEnemy);
-        binding.pbHorizontal.setProgress(hpEnemy);
-        binding.textHpEnemy.setText(String.valueOf(hpEnemy));
-
-        Log.d(TAG, "pbHorizontal.getMax: " + binding.pbHorizontal.getMax());
-        Log.d(TAG, "pbHorizontal.getProgress: " + binding.pbHorizontal.getProgress());
-        Log.d(TAG, "textHpEnemy.getText: " + binding.textHpEnemy.getText());
-
-        binding.textScore.setText("Gold : " + Utils.score);
-        mAnimationPlayer = new AnimationDrawable();
-        mAnimationPlayer.setOneShot(true);
-        mAnimationPlayer.setVisible(true, true);
-
-        mAnimationEnemy = new AnimationDrawable();
-        mAnimationEnemy.setOneShot(true);
-        mAnimationEnemy.setVisible(true, true);
+    private void startAnimation(AnimationDrawable mAnimation) {
+        mAnimation.start();
     }
 
+    private void stopAnimation(AnimationDrawable mAnimation) {
+        if (mAnimation.isRunning()) {
+            mAnimation.stop();
+        }
+    }
 
     private void stopAnimationEnemy(AnimationDrawable mAnimation) {
         if (mAnimation.isRunning()) {
