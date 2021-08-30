@@ -1,4 +1,4 @@
-package com.example.testclickergame;
+package com.example.testclickergame.presentation;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -11,6 +11,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.example.testclickergame.R;
 import com.example.testclickergame.databinding.ActivityTestBinding;
 
 import java.util.concurrent.TimeUnit;
@@ -24,8 +25,8 @@ import io.reactivex.rxjava3.schedulers.Schedulers;
 public class TestActivity extends AppCompatActivity {
 
     private ActivityTestBinding binding;
-    private Animation animation;
-    TextView textView;
+//    private Animation animation;
+//    TextView textView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,20 +34,21 @@ public class TestActivity extends AppCompatActivity {
         binding = ActivityTestBinding.inflate(LayoutInflater.from(this));
         setContentView(binding.getRoot());
 
-        animation = AnimationUtils.loadAnimation(this, R.anim.anim_combination);
         binding.btnStart.setOnClickListener(v -> {
             startAnim();
         });
     }
 
     private void startAnim() {
-
         Completable.timer(1, TimeUnit.MILLISECONDS)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new DisposableCompletableObserver() {
                     @Override
                     public void onComplete() {
+                        Animation animation;
+                        animation = AnimationUtils.loadAnimation(TestActivity.this, R.anim.anim_combination);
+                        TextView textView;
                         textView = new TextView(TestActivity.this);
                         RelativeLayout.LayoutParams lpView = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
                         lpView.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
@@ -79,7 +81,7 @@ public class TestActivity extends AppCompatActivity {
                                 .subscribe(new DisposableCompletableObserver() {
                                     @Override
                                     public void onComplete() {
-                                        binding.frameRootText.removeAllViews();
+                                        binding.frameRootText.removeView(textView);
                                     }
 
                                     @Override

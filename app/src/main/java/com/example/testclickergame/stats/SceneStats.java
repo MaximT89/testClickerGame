@@ -1,11 +1,11 @@
-package com.example.testclickergame;
+package com.example.testclickergame.stats;
 
 import java.util.Random;
 
-public class Utils {
+public class SceneStats {
     public static int score = 0;
     public static int maxLevelSceneProgress = 1;
-    public static int currentLevelScene = 2;
+    public static int currentLevelScene = 3;
 
     public static int getHpEnemy(int currentLevelScene){
         int temp = 0;

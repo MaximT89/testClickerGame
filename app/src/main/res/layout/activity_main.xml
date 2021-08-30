@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/constrain_root"
     android:layout_width="match_parent"
-    android:background="@drawable/game_background_2"
+    android:background="@drawable/game_background_1"
     android:layout_height="match_parent">
 
     <TextView
@@ -34,17 +34,25 @@
         app:layout_constraintVertical_bias="0.496"
         tools:src="@drawable/orc_idle" />
 
-    <ImageView
-        android:id="@+id/imageViewEnemy"
+    <RelativeLayout
+        android:id="@+id/relative_enemy"
         android:layout_width="190dp"
         android:layout_height="190dp"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.736"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.497"
-        tools:src="@drawable/goblin_idle" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintVertical_bias="0.497">
+
+        <ImageView
+            android:id="@+id/imageViewEnemy"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:src="@drawable/goblin_idle" />
+
+    </RelativeLayout>
+
 
     <Button
         android:id="@+id/stop_game"
@@ -68,7 +76,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/imageViewEnemy"
+        app:layout_constraintStart_toStartOf="@+id/relative_enemy"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.789">
 
@@ -99,5 +107,16 @@
 
 
     </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/frame_root_text"
+        android:layout_width="wrap_content"
+        android:layout_height="100dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.674"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.138"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
