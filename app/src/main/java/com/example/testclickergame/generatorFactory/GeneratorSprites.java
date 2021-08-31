@@ -148,4 +148,48 @@ public class GeneratorSprites {
         return frames;
     }
 
+    // Получаем набор картинок для анимации золотой монеты
+    public static List<BitmapDrawable> getListBitmapGoldMonet(Context context) {
+        List<BitmapDrawable> frames = new ArrayList<>();
+        List<Bitmap> listBitmap = new ArrayList<>();
+
+        listBitmap.add(getBitmapFromAssets(context, "images/scene_items/gold_monet/Gold_1.png"));
+        listBitmap.add(getBitmapFromAssets(context, "images/scene_items/gold_monet/Gold_2.png"));
+        listBitmap.add(getBitmapFromAssets(context, "images/scene_items/gold_monet/Gold_3.png"));
+        listBitmap.add(getBitmapFromAssets(context, "images/scene_items/gold_monet/Gold_4.png"));
+        listBitmap.add(getBitmapFromAssets(context, "images/scene_items/gold_monet/Gold_5.png"));
+        listBitmap.add(getBitmapFromAssets(context, "images/scene_items/gold_monet/Gold_6.png"));
+        listBitmap.add(getBitmapFromAssets(context, "images/scene_items/gold_monet/Gold_7.png"));
+        listBitmap.add(getBitmapFromAssets(context, "images/scene_items/gold_monet/Gold_8.png"));
+        listBitmap.add(getBitmapFromAssets(context, "images/scene_items/gold_monet/Gold_9.png"));
+        listBitmap.add(getBitmapFromAssets(context, "images/scene_items/gold_monet/Gold_10.png"));
+        listBitmap.add(getBitmapFromAssets(context, "images/scene_items/gold_monet/Gold_11.png"));
+        listBitmap.add(getBitmapFromAssets(context, "images/scene_items/gold_monet/Gold_12.png"));
+        listBitmap.add(getBitmapFromAssets(context, "images/scene_items/gold_monet/Gold_13.png"));
+        listBitmap.add(getBitmapFromAssets(context, "images/scene_items/gold_monet/Gold_14.png"));
+        listBitmap.add(getBitmapFromAssets(context, "images/scene_items/gold_monet/Gold_15.png"));
+        listBitmap.add(getBitmapFromAssets(context, "images/scene_items/gold_monet/Gold_16.png"));
+        listBitmap.add(getBitmapFromAssets(context, "images/scene_items/gold_monet/Gold_17.png"));
+        listBitmap.add(getBitmapFromAssets(context, "images/scene_items/gold_monet/Gold_18.png"));
+        listBitmap.add(getBitmapFromAssets(context, "images/scene_items/gold_monet/Gold_19.png"));
+        listBitmap.add(getBitmapFromAssets(context, "images/scene_items/gold_monet/Gold_20.png"));
+        listBitmap.add(getBitmapFromAssets(context, "images/scene_items/gold_monet/Gold_21.png"));
+        listBitmap.add(getBitmapFromAssets(context, "images/scene_items/gold_monet/Gold_22.png"));
+        listBitmap.add(getBitmapFromAssets(context, "images/scene_items/gold_monet/Gold_23.png"));
+        listBitmap.add(getBitmapFromAssets(context, "images/scene_items/gold_monet/Gold_24.png"));
+        listBitmap.add(getBitmapFromAssets(context, "images/scene_items/gold_monet/Gold_25.png"));
+        listBitmap.add(getBitmapFromAssets(context, "images/scene_items/gold_monet/Gold_26.png"));
+        listBitmap.add(getBitmapFromAssets(context, "images/scene_items/gold_monet/Gold_27.png"));
+        listBitmap.add(getBitmapFromAssets(context, "images/scene_items/gold_monet/Gold_28.png"));
+        listBitmap.add(getBitmapFromAssets(context, "images/scene_items/gold_monet/Gold_29.png"));
+        listBitmap.add(getBitmapFromAssets(context, "images/scene_items/gold_monet/Gold_30.png"));
+
+
+        for (int i = 0; i < listBitmap.size(); i++) {
+            frames.add(new BitmapDrawable(context.getResources(), listBitmap.get(i)));
+        }
+
+        return frames;
+    }
+
 }

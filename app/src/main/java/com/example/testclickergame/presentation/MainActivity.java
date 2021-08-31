@@ -35,8 +35,8 @@ public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
 
-    private AnimationDrawable mAnimationPlayer;
-    private AnimationDrawable mAnimationEnemy;
+    private AnimationDrawable mAnimationPlayer, mAnimationEnemy, mAnimatorGoldMonet;
+    private Animation animShake;
     private long totalDuration = 0;
     private boolean inGame = false;
     private int totalDamage = 0;
@@ -51,12 +51,9 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(LayoutInflater.from(this));
         setContentView(binding.getRoot());
         initView();
-
-        GeneratorSprites.fillAnimation(mAnimationPlayer, GeneratorSprites.getListBitmapOrcSlashing(this), 40);
-        binding.imageViewPlayer.setBackground(mAnimationPlayer);
-
-        GeneratorSprites.fillAnimation(mAnimationEnemy, GeneratorSprites.getListBitmapGoblinHurt(this), 40);
-        binding.imageViewEnemy.setBackground(mAnimationEnemy);
+        goldMonetCreater();
+        playerCreater();
+        enemyCreater();
 
         binding.constrainRoot.setOnClickListener(v -> {
             stopAnimation(mAnimationPlayer);
@@ -69,6 +66,65 @@ public class MainActivity extends AppCompatActivity {
             updateHpBarEnemyAndCreateNewEnemy();
             showDamage(currentDamage);
         });
+    }
+
+    private void enemyCreater() {
+        Completable.complete()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new DisposableCompletableObserver() {
+                    @Override
+                    public void onComplete() {
+                        GeneratorSprites.fillAnimation(mAnimationEnemy, GeneratorSprites.getListBitmapGoblinHurt(MainActivity.this), 40);
+                        binding.imageViewEnemy.setBackground(mAnimationEnemy);
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable e) {
+
+                    }
+                });
+    }
+
+    private void playerCreater() {
+        Completable.complete()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new DisposableCompletableObserver() {
+                    @Override
+                    public void onComplete() {
+                        GeneratorSprites.fillAnimation(mAnimationPlayer, GeneratorSprites.getListBitmapOrcSlashing(MainActivity.this), 40);
+                        binding.imageViewPlayer.setBackground(mAnimationPlayer);
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable e) {
+
+                    }
+                });
+    }
+
+    private void goldMonetCreater() {
+        Completable.complete()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new DisposableCompletableObserver() {
+                    @Override
+                    public void onComplete() {
+                        animShake = AnimationUtils.loadAnimation(MainActivity.this, R.anim.shake);
+                        binding.imageGoldMonet.startAnimation(animShake);
+
+                        GeneratorSprites.fillAnimation(mAnimatorGoldMonet, GeneratorSprites.getListBitmapGoldMonet(MainActivity.this), 40);
+                        binding.imageGoldMonet.setBackground(mAnimatorGoldMonet);
+                        stopAnimation(mAnimatorGoldMonet);
+                        startAnimation(mAnimatorGoldMonet);
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable e) {
+
+                    }
+                });
     }
 
     private void updateHpBarEnemyAndCreateNewEnemy() {
@@ -197,6 +253,11 @@ public class MainActivity extends AppCompatActivity {
 
         // Показываем золото
         binding.textScore.setText("Gold : " + SceneStats.score);
+
+        // Создаем аниматор для золотой монеты
+        mAnimatorGoldMonet = new AnimationDrawable();
+        mAnimatorGoldMonet.setOneShot(false);
+        mAnimatorGoldMonet.setVisible(true, true);
 
         // Создаем аниматор для ГГ
         mAnimationPlayer = new AnimationDrawable();
