@@ -3,12 +3,16 @@ package com.example.testclickergame.presentation;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.Animation;
@@ -42,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
     private int totalDamage = 0;
     private int currentDamage = 5;
     private int hpEnemy = 1;
+    private int countGoldMonet = 100; // Стоимость монетки
 
     private boolean enemyDie = true;
 
@@ -56,16 +61,31 @@ public class MainActivity extends AppCompatActivity {
         enemyCreater();
 
         binding.constrainRoot.setOnClickListener(v -> {
-            stopAnimation(mAnimationPlayer);
-            startAnimation(mAnimationPlayer);
-
-            stopAnimation(mAnimationEnemy);
-            startAnimation(mAnimationEnemy);
+            startAnimationRoot(mAnimationPlayer);
+            startAnimationRoot(mAnimationEnemy);
 
             showScore();
             updateHpBarEnemyAndCreateNewEnemy();
             showDamage(currentDamage);
         });
+    }
+
+    private void startAnimationRoot(AnimationDrawable animation) {
+        Completable.complete()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new DisposableCompletableObserver() {
+                    @Override
+                    public void onComplete() {
+                        stopAnimation(animation);
+                        startAnimation(animation);
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable e) {
+
+                    }
+                });
     }
 
     private void enemyCreater() {
@@ -105,19 +125,33 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void goldMonetCreater() {
+
+        stopAnimation(mAnimatorGoldMonet);
+        binding.imageGoldMonet.clearAnimation();
+        binding.imageGoldMonet.setVisibility(View.GONE);
+
         Completable.complete()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new DisposableCompletableObserver() {
                     @Override
                     public void onComplete() {
-                        animShake = AnimationUtils.loadAnimation(MainActivity.this, R.anim.shake);
-                        binding.imageGoldMonet.startAnimation(animShake);
+                        new CountDownTimer(10000, 1000) {
+                            @Override
+                            public void onTick(long l) { }
 
-                        GeneratorSprites.fillAnimation(mAnimatorGoldMonet, GeneratorSprites.getListBitmapGoldMonet(MainActivity.this), 40);
-                        binding.imageGoldMonet.setBackground(mAnimatorGoldMonet);
-                        stopAnimation(mAnimatorGoldMonet);
-                        startAnimation(mAnimatorGoldMonet);
+                            @Override
+                            public void onFinish() {
+                                animShake = AnimationUtils.loadAnimation(MainActivity.this, R.anim.shake);
+                                binding.imageGoldMonet.setVisibility(View.VISIBLE);
+
+                                binding.imageGoldMonet.startAnimation(animShake);
+
+                                GeneratorSprites.fillAnimation(mAnimatorGoldMonet, GeneratorSprites.getListBitmapGoldMonet(MainActivity.this), 40);
+                                binding.imageGoldMonet.setBackground(mAnimatorGoldMonet);
+                                stopAndStartAnimation(mAnimatorGoldMonet);
+                            }
+                        }.start();
                     }
 
                     @Override
@@ -245,6 +279,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initView() {
+
+        // Обрабатываем клик по монетке
+        binding.imageGoldMonet.setOnClickListener(view -> {
+            SceneStats.globalGold += countGoldMonet;
+            showScore();
+            goldMonetCreater();
+        });
+
         // Инициализируем view model
         final MainActivityViewModel viewModel = new ViewModelProvider(this).get(MainActivityViewModel.class);
 
@@ -252,7 +294,7 @@ public class MainActivity extends AppCompatActivity {
         createEnemyHp();
 
         // Показываем золото
-        binding.textScore.setText("Gold : " + SceneStats.score);
+        binding.textScore.setText("Gold : " + SceneStats.globalGold);
 
         // Создаем аниматор для золотой монеты
         mAnimatorGoldMonet = new AnimationDrawable();
@@ -271,7 +313,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showScore() {
-        binding.textScore.setText("Gold : " + SceneStats.score);
+        binding.textScore.setText("Gold : " + SceneStats.globalGold);
     }
 
     private void showDamage(int currentDamage) {
@@ -337,7 +379,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void sendGold(int count) {
-        SceneStats.score = SceneStats.score + count;
+        SceneStats.globalGold = SceneStats.globalGold + count;
+    }
+
+    private void stopAndStartAnimation(AnimationDrawable mAnimation){
+        if (mAnimation.isRunning()) {
+            mAnimation.stop();
+        }
+        mAnimation.start();
     }
 
     private void startAnimation(AnimationDrawable mAnimation) {

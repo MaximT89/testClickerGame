@@ -3,7 +3,7 @@ package com.example.testclickergame.stats;
 import java.util.Random;
 
 public class SceneStats {
-    public static int score = 0;
+    public static int globalGold = 0;
     public static int maxLevelSceneProgress = 1;
     public static int currentLevelScene = 3;
 
