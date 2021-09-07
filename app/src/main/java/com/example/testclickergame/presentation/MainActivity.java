@@ -1,11 +1,10 @@
 package com.example.testclickergame.presentation;
 
+import static com.example.testclickergame.stats.SceneStats.*;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
-import android.animation.AnimatorSet;
-import android.animation.ObjectAnimator;
-import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 
 import android.graphics.Color;
@@ -23,7 +22,7 @@ import android.widget.TextView;
 import com.example.testclickergame.R;
 import com.example.testclickergame.databinding.ActivityMainBinding;
 import com.example.testclickergame.generatorFactory.GeneratorSprites;
-import com.example.testclickergame.stats.SceneStats;
+import com.example.testclickergame.stats.PlayerStats;
 
 import java.util.concurrent.TimeUnit;
 
@@ -44,7 +43,6 @@ public class MainActivity extends AppCompatActivity {
     private long totalDuration = 0;
     private boolean inGame = false;
     private int totalDamage = 0;
-    private int currentDamage = 5;
     private int hpEnemy = 1;
     private int countGoldMonet = 100; // Стоимость монетки
 
@@ -59,15 +57,33 @@ public class MainActivity extends AppCompatActivity {
         goldMonetCreater();
         playerCreater();
         enemyCreater();
+        showLvlScene();
+        showScore();
+        showPlayerStats();
 
         binding.constrainRoot.setOnClickListener(v -> {
             startAnimationRoot(mAnimationPlayer);
             startAnimationRoot(mAnimationEnemy);
 
-            showScore();
             updateHpBarEnemyAndCreateNewEnemy();
-            showDamage(currentDamage);
+            showDamageEnemy();
         });
+    }
+
+    private void showPlayerStats() {
+        binding.textStatsCurrentDamage.setText(String.valueOf(PlayerStats.currentDamage));
+        binding.textStatsNextUpDamage.setText("+" + PlayerStats.countNextUpDamage);
+        binding.textStatsGoldForUp.setText(String.valueOf(PlayerStats.countGoldForNextUpdate));
+
+        if(globalGold >= PlayerStats.countGoldForNextUpdate){
+            binding.textStatsGoldForUp.setClickable(true);
+            binding.textStatsGoldForUp.setEnabled(true);
+            binding.textStatsGoldForUp.setBackgroundResource(R.drawable.bg_active_up_damage);
+        } else {
+            binding.textStatsGoldForUp.setClickable(false);
+            binding.textStatsGoldForUp.setEnabled(false);
+            binding.textStatsGoldForUp.setBackgroundResource(R.drawable.bg_inactive_up_damage);
+        }
     }
 
     private void startAnimationRoot(AnimationDrawable animation) {
@@ -138,7 +154,8 @@ public class MainActivity extends AppCompatActivity {
                     public void onComplete() {
                         new CountDownTimer(10000, 1000) {
                             @Override
-                            public void onTick(long l) { }
+                            public void onTick(long l) {
+                            }
 
                             @Override
                             public void onFinish() {
@@ -165,13 +182,17 @@ public class MainActivity extends AppCompatActivity {
         // В данном методе мы заносим хп противника в прогресс бар (хп бар) под монстром,
         // если хп заканчивается мы прибавляем золото и наполняем прогресс бар с хп новыми жизнями
 
-        totalDamage += currentDamage;
+        totalDamage += PlayerStats.currentDamage;
         int currentEnemyHp = hpEnemy - totalDamage;
         binding.pbHorizontal.setProgress(currentEnemyHp);
 
         if (currentEnemyHp <= 0) {
             binding.textHpEnemy.setText("0");
+            updateLvlScene();
             sendGold(10);
+            showScore();
+            showPlayerStats();
+            updateBackgroundScene();
 
             Completable.complete()
                     .subscribeOn(Schedulers.io())
@@ -224,9 +245,23 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private void updateLvlScene() {
+        currentPartLevelScene++;
+
+        if (currentPartLevelScene == 11) {
+            currentLevelScene++;
+            currentPartLevelScene = 1;
+        }
+        showLvlScene();
+    }
+
+    private void showLvlScene() {
+        binding.textLevel.setText("LVL " + currentLevelScene + " - " + currentPartLevelScene);
+    }
+
     private void createEnemyHp() {
         // Создаем полоску с жизнями монстра
-        hpEnemy = SceneStats.getHpEnemy(SceneStats.currentLevelScene);
+        hpEnemy = getHpEnemy(currentLevelScene);
         binding.pbHorizontal.setMax(hpEnemy);
         binding.pbHorizontal.setProgress(hpEnemy);
         binding.textHpEnemy.setText(String.valueOf(hpEnemy));
@@ -273,17 +308,42 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
 
         // Скрываем навигационные кнопки
+        hideSystemUi();
+        updateBackgroundScene();
+
+        startGame();
+    }
+
+    private void hideSystemUi() {
         View decorView = getWindow().getDecorView();
         int uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_FULLSCREEN;
         decorView.setSystemUiVisibility(uiOptions);
     }
 
+    private void updateBackgroundScene() {
+//        if(){
+//
+//        }
+//
+//        binding.constrainRoot.getBackground()
+//        binding.constrainRoot.setBackgroundResource(getBackgroundResource());
+    }
+
     private void initView() {
+
+        // Обрабатываем кнопку увеличения урона за золото
+        binding.textStatsGoldForUp.setOnClickListener(view -> {
+            globalGold = globalGold - PlayerStats.countGoldForNextUpdate;
+            PlayerStats.currentDamage = PlayerStats.currentDamage + PlayerStats.countNextUpDamage;
+            showPlayerStats();
+            showScore();
+        });
 
         // Обрабатываем клик по монетке
         binding.imageGoldMonet.setOnClickListener(view -> {
-            SceneStats.globalGold += countGoldMonet;
+            globalGold += countGoldMonet;
             showScore();
+            showPlayerStats();
             goldMonetCreater();
         });
 
@@ -294,7 +354,7 @@ public class MainActivity extends AppCompatActivity {
         createEnemyHp();
 
         // Показываем золото
-        binding.textScore.setText("Gold : " + SceneStats.globalGold);
+        binding.textScore.setText("Gold : " + globalGold);
 
         // Создаем аниматор для золотой монеты
         mAnimatorGoldMonet = new AnimationDrawable();
@@ -313,10 +373,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showScore() {
-        binding.textScore.setText("Gold : " + SceneStats.globalGold);
+        binding.textScore.setText("Gold : " + globalGold);
     }
 
-    private void showDamage(int currentDamage) {
+    private void showDamageEnemy() {
         // Данный метод показывает красный урон над монстром
 
         Completable.timer(1, TimeUnit.MILLISECONDS)
@@ -330,7 +390,7 @@ public class MainActivity extends AppCompatActivity {
                         RelativeLayout.LayoutParams lpView = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
                         lpView.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
                         textView.setLayoutParams(lpView);
-                        textView.setText("- " + currentDamage);
+                        textView.setText("- " + PlayerStats.currentDamage);
                         textView.setTypeface(Typeface.DEFAULT_BOLD);
                         textView.setTextSize(26f);
                         textView.setShadowLayer(2, 1, 1, Color.BLACK);
@@ -373,16 +433,16 @@ public class MainActivity extends AppCompatActivity {
 
                     @Override
                     public void onError(@NonNull Throwable e) {
-
+                        e.printStackTrace();
                     }
                 });
     }
 
     private void sendGold(int count) {
-        SceneStats.globalGold = SceneStats.globalGold + count;
+        globalGold = globalGold + count;
     }
 
-    private void stopAndStartAnimation(AnimationDrawable mAnimation){
+    private void stopAndStartAnimation(AnimationDrawable mAnimation) {
         if (mAnimation.isRunning()) {
             mAnimation.stop();
         }

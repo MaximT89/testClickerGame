@@ -5,13 +5,5 @@
         android:repeatCount="infinite"
         android:fromYDelta="-20%"
         android:toYDelta="20%" />
-
-    <translate android:duration="4000"
-        android:pivotX="50%"
-        android:fromXDelta="-800"
-        android:toXDelta="800"
-        android:repeatMode="reverse"
-        android:repeatCount="infinite"/>
 </set>
 
-<!--    android:repeatCount="1000"-->

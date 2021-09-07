@@ -3,7 +3,10 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="..\:/Users/Maksik/AndroidStudioProjects/testClickerGame/app/src/main/res/layout/activity_main.xml" value="0.5" />
+        <entry key="..\:/Users/Maksik/AndroidStudioProjects/testClickerGame/app/src/main/res/drawable/bg_active_up_damage.xml" value="0.35625" />
+        <entry key="..\:/Users/Maksik/AndroidStudioProjects/testClickerGame/app/src/main/res/drawable/bg_inactive_up_damage.xml" value="0.35625" />
+        <entry key="..\:/Users/Maksik/AndroidStudioProjects/testClickerGame/app/src/main/res/drawable/bg_score.xml" value="0.35625" />
+        <entry key="..\:/Users/Maksik/AndroidStudioProjects/testClickerGame/app/src/main/res/layout/activity_main.xml" value="0.33" />
         <entry key="..\:/Users/Maksik/AndroidStudioProjects/testClickerGame/app/src/main/res/layout/activity_test.xml" value="0.3359375" />
       </map>
     </option>
