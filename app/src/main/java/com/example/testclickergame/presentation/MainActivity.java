@@ -75,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
         binding.textStatsNextUpDamage.setText("+" + PlayerStats.countNextUpDamage);
         binding.textStatsGoldForUp.setText(String.valueOf(PlayerStats.countGoldForNextUpdate));
 
-        if(globalGold >= PlayerStats.countGoldForNextUpdate){
+        if (globalGold >= PlayerStats.countGoldForNextUpdate) {
             binding.textStatsGoldForUp.setClickable(true);
             binding.textStatsGoldForUp.setEnabled(true);
             binding.textStatsGoldForUp.setBackgroundResource(R.drawable.bg_active_up_damage);
@@ -99,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
 
                     @Override
                     public void onError(@NonNull Throwable e) {
-
+                        e.printStackTrace();
                     }
                 });
     }
@@ -117,7 +117,7 @@ public class MainActivity extends AppCompatActivity {
 
                     @Override
                     public void onError(@NonNull Throwable e) {
-
+                        e.printStackTrace();
                     }
                 });
     }
@@ -135,7 +135,7 @@ public class MainActivity extends AppCompatActivity {
 
                     @Override
                     public void onError(@NonNull Throwable e) {
-
+                        e.printStackTrace();
                     }
                 });
     }
@@ -173,7 +173,7 @@ public class MainActivity extends AppCompatActivity {
 
                     @Override
                     public void onError(@NonNull Throwable e) {
-
+                        e.printStackTrace();
                     }
                 });
     }
@@ -426,7 +426,7 @@ public class MainActivity extends AppCompatActivity {
 
                                     @Override
                                     public void onError(@NonNull Throwable e) {
-
+                                        e.printStackTrace();
                                     }
                                 });
                     }
