@@ -8,12 +8,45 @@ import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 
+import com.example.testclickergame.stats.EnemyStats;
+import com.example.testclickergame.stats.SceneStats;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class GeneratorSprites {
+
+    public static List<BitmapDrawable> generateCreateEnemy(Context context) {
+        List<BitmapDrawable> list = new ArrayList<>();
+        int currentEnemy = GeneratorSprites.generateCurrentEnemy();
+
+        if (currentEnemy > 1 && currentEnemy < 10) {
+            list = GeneratorSprites.getListBitmapGoblinSlashing(context);
+        }
+
+        return list;
+    }
+
+    private static int generateCurrentEnemy() {
+        if (SceneStats.currentLevelScene > 0 && SceneStats.currentLevelScene < 40) {
+            EnemyStats.currentEnemy = new Random().nextInt(3) + 1;
+        }
+
+        return EnemyStats.currentEnemy;
+    }
+
+    public static List<BitmapDrawable> generateDyingEnemy(Context context, int currentEnemy) {
+        List<BitmapDrawable> list = new ArrayList<>();
+
+        if (currentEnemy > 0 && currentEnemy <= 3) {
+            list = GeneratorSprites.getListBitmapGoblinDying(context);
+        }
+
+        return list;
+    }
 
     // Наполняет аниматор картинками и задает скорость анимации
     public static void fillAnimation(AnimationDrawable mAnimation, List<BitmapDrawable> listBitmap, int duration) {
@@ -120,6 +153,32 @@ public class GeneratorSprites {
         return frames;
     }
 
+    // Получаем набор картинок для анимации получению урона Гоблина
+    public static List<BitmapDrawable> getListBitmapGoblinSlashing(Context context) {
+        List<BitmapDrawable> frames = new ArrayList<>();
+        List<Bitmap> listBitmap = new ArrayList<>();
+
+        listBitmap.add(getBitmapFromAssets(context, "images/goblin/slashing/0_Goblin_Slashing_000.png"));
+        listBitmap.add(getBitmapFromAssets(context, "images/goblin/slashing/0_Goblin_Slashing_001.png"));
+        listBitmap.add(getBitmapFromAssets(context, "images/goblin/slashing/0_Goblin_Slashing_002.png"));
+        listBitmap.add(getBitmapFromAssets(context, "images/goblin/slashing/0_Goblin_Slashing_003.png"));
+        listBitmap.add(getBitmapFromAssets(context, "images/goblin/slashing/0_Goblin_Slashing_004.png"));
+        listBitmap.add(getBitmapFromAssets(context, "images/goblin/slashing/0_Goblin_Slashing_005.png"));
+        listBitmap.add(getBitmapFromAssets(context, "images/goblin/slashing/0_Goblin_Slashing_006.png"));
+        listBitmap.add(getBitmapFromAssets(context, "images/goblin/slashing/0_Goblin_Slashing_007.png"));
+        listBitmap.add(getBitmapFromAssets(context, "images/goblin/slashing/0_Goblin_Slashing_008.png"));
+        listBitmap.add(getBitmapFromAssets(context, "images/goblin/slashing/0_Goblin_Slashing_009.png"));
+        listBitmap.add(getBitmapFromAssets(context, "images/goblin/slashing/0_Goblin_Slashing_010.png"));
+        listBitmap.add(getBitmapFromAssets(context, "images/goblin/slashing/0_Goblin_Slashing_011.png"));
+        listBitmap.add(getBitmapFromAssets(context, "images/goblin/slashing/0_Goblin_Slashing_012.png"));
+
+        for (int i = 0; i < listBitmap.size(); i++) {
+            frames.add(new BitmapDrawable(context.getResources(), listBitmap.get(i)));
+        }
+
+        return frames;
+    }
+
     // Получаем набор картинок для анимации смерти гоблина Гоблина
     public static List<BitmapDrawable> getListBitmapGoblinDying(Context context) {
         List<BitmapDrawable> frames = new ArrayList<>();
@@ -183,7 +242,6 @@ public class GeneratorSprites {
         listBitmap.add(getBitmapFromAssets(context, "images/scene_items/gold_monet/Gold_28.png"));
         listBitmap.add(getBitmapFromAssets(context, "images/scene_items/gold_monet/Gold_29.png"));
         listBitmap.add(getBitmapFromAssets(context, "images/scene_items/gold_monet/Gold_30.png"));
-
 
         for (int i = 0; i < listBitmap.size(); i++) {
             frames.add(new BitmapDrawable(context.getResources(), listBitmap.get(i)));

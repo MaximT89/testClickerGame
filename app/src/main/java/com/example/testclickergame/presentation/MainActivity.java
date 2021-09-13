@@ -12,6 +12,7 @@ import android.graphics.Typeface;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.Animation;
@@ -22,6 +23,7 @@ import android.widget.TextView;
 import com.example.testclickergame.R;
 import com.example.testclickergame.databinding.ActivityMainBinding;
 import com.example.testclickergame.generatorFactory.GeneratorSprites;
+import com.example.testclickergame.stats.EnemyStats;
 import com.example.testclickergame.stats.PlayerStats;
 
 import java.util.concurrent.TimeUnit;
@@ -41,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
     private AnimationDrawable mAnimationPlayer, mAnimationEnemy, mAnimatorGoldMonet;
     private Animation animShake;
     private long totalDuration = 0;
-    private boolean inGame = false;
+    private boolean inGame = true;
     private int totalDamage = 0;
     private int hpEnemy = 1;
     private int countGoldMonet = 100; // Стоимость монетки
@@ -63,7 +65,6 @@ public class MainActivity extends AppCompatActivity {
 
         binding.constrainRoot.setOnClickListener(v -> {
             startAnimationRoot(mAnimationPlayer);
-            startAnimationRoot(mAnimationEnemy);
 
             updateHpBarEnemyAndCreateNewEnemy();
             showDamageEnemy();
@@ -87,6 +88,23 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void startAnimationRoot(AnimationDrawable animation) {
+//        Completable.timer(500, TimeUnit.MILLISECONDS)
+//                .subscribeOn(Schedulers.io())
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .subscribe(new DisposableCompletableObserver() {
+//                    @Override
+//                    public void onComplete() {
+//                        stopAnimation(animation);
+//                        startAnimation(animation);
+//                    }
+//
+//                    @Override
+//                    public void onError(@NonNull Throwable e) {
+//                        e.printStackTrace();
+//                    }
+//                });
+
+
         Completable.complete()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -105,21 +123,40 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void enemyCreater() {
-        Completable.complete()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new DisposableCompletableObserver() {
-                    @Override
-                    public void onComplete() {
-                        GeneratorSprites.fillAnimation(mAnimationEnemy, GeneratorSprites.getListBitmapGoblinHurt(MainActivity.this), 40);
-                        binding.imageViewEnemy.setBackground(mAnimationEnemy);
-                    }
+        mAnimationEnemy = new AnimationDrawable();
+        mAnimationEnemy.setOneShot(false);
+        mAnimationEnemy.setVisible(true, true);
 
-                    @Override
-                    public void onError(@NonNull Throwable e) {
-                        e.printStackTrace();
-                    }
-                });
+//        GeneratorSprites.fillAnimation(mAnimationEnemy, GeneratorSprites.generateCreateEnemy(MainActivity.this), 40);
+        GeneratorSprites.fillAnimation(mAnimationEnemy, GeneratorSprites.getListBitmapGoblinSlashing(MainActivity.this), 40);
+        binding.imageViewEnemy.setBackground(mAnimationEnemy);
+        startAnimationRoot(mAnimationEnemy);
+
+
+//        Completable.complete()
+//                .subscribeOn(Schedulers.io())
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .subscribe(new DisposableCompletableObserver() {
+//                    @Override
+//                    public void onComplete() {
+//
+//                        mAnimationEnemy = new AnimationDrawable();
+//                        mAnimationEnemy.setOneShot(false);
+//                        mAnimationEnemy.setVisible(true, true);
+//
+//                        GeneratorSprites.fillAnimation(mAnimationEnemy, GeneratorSprites.generateCreateEnemy(MainActivity.this), 40);
+//                        binding.imageViewEnemy.setBackground(mAnimationEnemy);
+//                        startAnimationRoot(mAnimationEnemy);
+//
+//
+//                    }
+//
+//                    @Override
+//                    public void onError(@NonNull Throwable e) {
+//                        e.printStackTrace();
+//                    }
+//                });
+
     }
 
     private void playerCreater() {
@@ -222,10 +259,8 @@ public class MainActivity extends AppCompatActivity {
                                             stopAnimation(mAnimationEnemy);
                                             createEnemyHp();
                                             binding.constrainRoot.setClickable(true);
-                                            mAnimationEnemy = new AnimationDrawable();
-                                            mAnimationEnemy.setOneShot(true);
-                                            GeneratorSprites.fillAnimation(mAnimationEnemy, GeneratorSprites.getListBitmapGoblinHurt(MainActivity.this), 40);
-                                            binding.imageViewEnemy.setBackground(mAnimationEnemy);
+
+                                            enemyCreater();
                                         }
 
                                         @Override
@@ -289,11 +324,14 @@ public class MainActivity extends AppCompatActivity {
                 .subscribe(new DisposableCompletableObserver() {
                     @Override
                     public void onComplete() {
-                        sendGold(10);
-                        showScore();
+
+                        // TODO тут нужно будет отобразить урон у пользователя
+
+
                         if (inGame) {
                             updateData(totalDuration);
                         }
+
                     }
 
                     @Override
@@ -311,8 +349,9 @@ public class MainActivity extends AppCompatActivity {
         hideSystemUi();
         updateBackgroundScene();
 
-        startGame();
+        startGame(inGame);
     }
+
 
     private void hideSystemUi() {
         View decorView = getWindow().getDecorView();
@@ -368,7 +407,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Создаем аниматор для Enemy
         mAnimationEnemy = new AnimationDrawable();
-        mAnimationEnemy.setOneShot(true);
+        mAnimationEnemy.setOneShot(false);
         mAnimationEnemy.setVisible(true, true);
     }
 
@@ -459,10 +498,13 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void startGame() {
-        inGame = true;
-        stopAnimation(mAnimationPlayer);
-        updateData(getTotalDuration(mAnimationPlayer));
-        startAnimation(mAnimationPlayer);
+    private void startGame(boolean inGame) {
+
+        if (inGame) {
+            startAnimationRoot(mAnimationEnemy);
+
+            updateData(getTotalDuration(mAnimationEnemy));
+
+        }
     }
 }
